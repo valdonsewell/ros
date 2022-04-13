@@ -1,0 +1,86 @@
+
+#include <ros/ros.h> 
+#include <std_mesgs/String.h>
+#include <std_msgs/UInt16.h>
+#include <geometry_msgs/Twist.h>
+
+#define ENA 5
+#define ENB 6
+#define IN1 7
+#define IN2 8
+#define IN3 9
+#define IN4 11
+
+#define MAX_SPEED 250
+
+ros::NodeHandle nh;
+
+std_msgs::String str_msg;
+std_msgs::UInt16 int_msg;
+
+void subscriberCallback(const std_msgs::UInt16& int_msg){
+  //content
+  
+}
+
+ros::Publisher publisher("topic", &str_msg);
+ros::Subscriber<std_msgs::UInt16> subscriber("topic2", @subscriberCallback);
+
+void leftSideMove(int s){
+  analogWrite(ENA, abs(s));
+  if (s>0){
+    digitalWrite(IN1, HIGH);
+    digitalWrite(IN2, LOW);
+  }
+  if (s<0){
+    digitalWrite(IN1, LOW);
+    digitalWrite(IN2, HIGH);
+  }
+}
+
+void rightSideMove(int s){
+  analogWrite(ENB, abs(s));
+  if (s>0){
+    digitalWrite(IN4, HIGH);
+    digitalWrite(IN3, LOW);
+  }
+  if (s<0){
+    digitalWrite(IN4, LOW);
+    digitalWrite(IN3, HIGH);
+  }
+}
+
+
+int main(int argc, char **argv){
+  ros::init(argc, argv, "teleop");
+
+  ros::Publisher tele_op = n.advertise<geometry_msgs::Twist>("tele_op", 10);
+  ros::Subscriber scan = n.subscribe<sensor_msgs::LaserScan>(
+      "scan", 1, &readSensorCallback);
+
+  geometry_msgs::Twist moveForward;
+  geometry_msgs::Twist turnAround;
+
+  ros::Rate loop_rate(10);
+  
+}
+
+int count = 0; 
+
+
+
+
+void setup() {
+  // put your setup code here, to run once:
+  nh.initNode();//initialize node
+  nh.advertise(publisher); //start the publisher
+  nh.subscribe(subscriber); //start the subscriber
+
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  str_msg.data = "Hello Mundo";
+  publisher.publish(&str_msg);
+  nh.spinOnce(); //run node handler once to handle comms
+}
